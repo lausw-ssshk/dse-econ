@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DSE 經濟｜經濟周期練習</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #1a2332;
+      --muted: #5a6a7e;
+      --primary: #1e5a96;
+      --primary-soft: #e8f1fa;
+      --ok: #0d7a4f;
+      --ok-bg: #e6f6ef;
+      --bad: #b42318;
+      --bad-bg: #fdecea;
+      --border: #d5dee9;
+      --shadow: 0 8px 24px rgba(26, 35, 50, 0.08);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", "Heiti TC", sans-serif;
+      background: linear-gradient(160deg, #eef4fb 0%, #f8fafc 45%, #eef6f2 100%);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header .badge {
+      display: inline-block;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.55rem;
+      letter-spacing: 0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 20px;
+      margin-bottom: 16px;
+    }
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .bar {
+      height: 8px;
+      background: #e7eef6;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #1e5a96, #2f8f6b);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+    .stage-chip {
+      display: inline-block;
+      font-size: 0.78rem;
+      background: #f0f4f8;
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+    .opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      transition: border-color 0.15s, background 0.15s, transform 0.05s;
+    }
+    .opt:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .opt:active:not(:disabled) { transform: scale(0.995); }
+    .opt:disabled { cursor: default; opacity: 1; }
+    .opt .letter {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #eef3f8;
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .opt .label { flex: 1; padding-top: 2px; }
+    .opt.correct {
+      border-color: var(--ok);
+      background: var(--ok-bg);
+    }
+    .opt.correct .letter { background: var(--ok); color: #fff; }
+    .opt.wrong {
+      border-color: var(--bad);
+      background: var(--bad-bg);
+    }
+    .opt.wrong .letter { background: var(--bad); color: #fff; }
+    .feedback {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { background: var(--ok-bg); color: #0a5c3c; border: 1px solid #b7e4ce; }
+    .feedback.bad { background: var(--bad-bg); color: #8a1c14; border: 1px solid #f5c2bc; }
+    .feedback strong { display: block; margin-bottom: 4px; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    button.btn {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.05s;
+    }
+    button.btn:active { transform: scale(0.98); }
+    button.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: #eef3f8; color: var(--ink); }
+    .btn-ghost { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+    .hidden { display: none !important; }
+
+    /* Intro / diagram */
+    .intro h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+    .intro p { margin: 0 0 12px; color: var(--muted); font-size: 0.95rem; }
+    .canvas-wrap {
+      width: 100%;
+      background: #fafcfe;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      margin: 12px 0 8px;
+      overflow: hidden;
+    }
+    .canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 280px;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 3px;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 2px;
+    }
+    .legend .cycle::before { background: #1e5a96; }
+    .legend .trend::before { background: #c45c26; border-top: 2px dashed #c45c26; height: 0; }
+
+    .stages-mini {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .stages-mini div {
+      background: #f5f8fc;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+    .stages-mini strong { display: block; color: var(--primary); margin-bottom: 2px; }
+
+    /* Result */
+    .result { text-align: center; }
+    .result .score-big {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 8px 0;
+    }
+    .result p { color: var(--muted); }
+    .result-msg { font-size: 1.05rem; font-weight: 600; color: var(--ink); margin: 8px 0 16px; }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge">DSE Economics</div>
+      <h1>DSE 經濟｜經濟周期練習</h1>
+      <p class="subtitle">認識階段、指標變動與常見考試陷阱 · 互動練習</p>
+    </header>
+
+    <!-- Intro -->
+    <section id="intro" class="card intro">
+      <h2>經濟周期一覽</h2>
+      <p>經濟周期是指<strong>實質本地生產總值（real GDP）</strong>在短期內圍繞其<strong>長期趨勢</strong>上下波動的現象。下圖以 Canvas 繪製典型周期曲線：</p>
+      <div class="canvas-wrap">
+        <canvas id="cycleChart" width="700" height="320" aria-label="經濟周期示意圖：實質 GDP 圍繞長期趨勢波動"></canvas>
+      </div>
+      <div class="legend">
+        <span class="cycle">實質 GDP（周期）</span>
+        <span class="trend">長期趨勢／潛在產出</span>
+      </div>
+      <div class="stages-mini">
+        <div><strong>擴張</strong>GDP↑ 失業↓</div>
+        <div><strong>頂峰</strong>周期高點</div>
+        <div><strong>收縮／衰退</strong>GDP↓ 失業↑</div>
+        <div><strong>谷底</strong>周期低點</div>
+        <div><strong>復甦</strong>由谷底回升</div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="startBtn">開始練習（8 題）</button>
+      </div>
+    </section>
+
+    <!-- Quiz -->
+    <section id="quiz" class="card hidden">
+      <div class="progress-row">
+        <span id="progressLabel">第 1 / 8 題</span>
+        <span id="scoreLabel">得分：0</span>
+      </div>
+      <div class="bar"><span id="progressBar"></span></div>
+      <div id="stageChip" class="stage-chip"></div>
+      <div id="qFigure" class="canvas-wrap hidden">
+        <canvas id="qCanvas" width="700" height="260" aria-label="題目附圖"></canvas>
+      </div>
+      <p class="q-text" id="qText"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" id="retryBtn" disabled>重試本題</button>
+        <button type="button" class="btn btn-primary" id="nextBtn" disabled>下一題</button>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section id="result" class="card result hidden">
+      <h2>練習完成</h2>
+      <div class="score-big" id="finalScore">0/8</div>
+      <p class="result-msg" id="resultMsg"></p>
+      <p>建議：錯題可重溫筆記中的「考試陷阱」與指標對照表。</p>
+      <div class="canvas-wrap">
+        <canvas id="resultChart" width="700" height="280" aria-label="複習用經濟周期圖"></canvas>
+      </div>
+      <div class="actions" style="justify-content:center">
+        <button type="button" class="btn btn-primary" id="restartBtn">重新開始</button>
+        <button type="button" class="btn btn-ghost" id="reviewBtn">返回圖解</button>
+      </div>
+    </section>
+
+    <footer>原創 DSE 風格練習 · 非 HKEAA 試卷原文 · 開檔即可使用</footer>
+  </div>
+
+  <script>
+(function () {
+  "use strict";
+
+  /* ========== Canvas: economic cycle diagram ========== */
+  function drawCycleChart(canvas, opts) {
+    opts = opts || {};
+    var highlight = opts.highlight || null; // 'expansion'|'peak'|'contraction'|'trough'|'recovery'|null
+    var dpr = window.devicePixelRatio || 1;
+    var cssW = canvas.clientWidth || 700;
+    var cssH = Math.round(cssW * 0.42);
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var W = cssW, H = cssH;
+    var padL = 52, padR = 18, padT = 28, padB = 42;
+    var plotW = W - padL - padR;
+    var plotH = H - padT - padB;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#fafcfe";
+    ctx.fillRect(0, 0, W, H);
+
+    // Axes
+    ctx.strokeStyle = "#9aa8b8";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + plotH);
+    ctx.lineTo(padL + plotW, padT + plotH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = "#5a6a7e";
+    ctx.font = "12px 'Noto Sans TC', 'PingFang HK', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("時間 →", padL + plotW * 0.5, H - 10);
+    ctx.save();
+    ctx.translate(14, padT + plotH * 0.5);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("實質 GDP", 0, 0);
+    ctx.restore();
+
+    // Trend line (slight upward slope)
+    var trendY0 = padT + plotH * 0.55;
+    var trendY1 = padT + plotH * 0.38;
+    ctx.strokeStyle = "#c45c26";
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([7, 5]);
+    ctx.beginPath();
+    ctx.moveTo(padL, trendY0);
+    ctx.lineTo(padL + plotW, trendY1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#c45c26";
+    ctx.font = "11px 'Noto Sans TC', sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("長期趨勢", padL + plotW - 4, trendY1 - 8);
+
+    // Cycle path: smooth curve via parametric points
+    // Stages along x: expansion 0-0.28, peak~0.32, contraction 0.36-0.62, trough~0.66, recovery 0.70-1
+    function cycleY(t) {
+      // t in [0,1]; sine-like wave with rising envelope around trend
+      var trend = trendY0 + (trendY1 - trendY0) * t;
+      var amp = plotH * 0.28;
+      // phase: start mid-rising, peak, trough, recover
+      var phase = -Math.PI / 2 + t * Math.PI * 2.05;
+      return trend - Math.sin(phase) * amp * (0.85 + 0.15 * t);
+    }
+
+    // Sample points
+    var pts = [];
+    var n = 120;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n;
+      pts.push({ x: padL + t * plotW, y: cycleY(t), t: t });
+    }
+
+    // Optional highlight band
+    var bands = {
+      expansion: [0.02, 0.28],
+      peak: [0.26, 0.36],
+      contraction: [0.36, 0.62],
+      trough: [0.60, 0.72],
+      recovery: [0.70, 0.98]
+    };
+    if (highlight && bands[highlight]) {
+      var b = bands[highlight];
+      ctx.fillStyle = "rgba(30, 90, 150, 0.10)";
+      ctx.fillRect(padL + b[0] * plotW, padT, (b[1] - b[0]) * plotW, plotH);
+    }
+
+    // Draw cycle curve
+    ctx.strokeStyle = "#1e5a96";
+    ctx.lineWidth = 2.6;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    for (var j = 0; j < pts.length; j++) {
+      if (j === 0) ctx.moveTo(pts[j].x, pts[j].y);
+      else ctx.lineTo(pts[j].x, pts[j].y);
+    }
+    ctx.stroke();
+
+    // Turning points: peak & trough
+    function nearest(tTarget) {
+      var best = pts[0], bd = 1;
+      for (var k = 0; k < pts.length; k++) {
+        var d = Math.abs(pts[k].t - tTarget);
+        if (d < bd) { bd = d; best = pts[k]; }
+      }
+      return best;
+    }
+    var peak = nearest(0.31);
+    var trough = nearest(0.66);
+
+    function markPoint(p, label, above) {
+      ctx.fillStyle = "#1e5a96";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#1a2332";
+      ctx.font = "bold 12px 'Noto Sans TC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(label, p.x, above ? p.y - 12 : p.y + 18);
+    }
+    markPoint(peak, "頂峰", true);
+    markPoint(trough, "谷底", false);
+
+    // Stage labels along bottom of plot
+    ctx.font = "11px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = "#5a6a7e";
+    ctx.textAlign = "center";
+    var labels = [
+      { t: 0.15, text: "擴張" },
+      { t: 0.48, text: "收縮／衰退" },
+      { t: 0.84, text: "復甦" }
+    ];
+    labels.forEach(function (L) {
+      ctx.fillText(L.text, padL + L.t * plotW, padT + plotH - 8);
+    });
+  }
+
+  function drawIndicatorCompare(canvas) {
+    var dpr = window.devicePixelRatio || 1;
+    var cssW = canvas.clientWidth || 700;
+    var cssH = Math.round(cssW * 0.36);
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var W = cssW, H = cssH;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#fafcfe";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "#1a2332";
+    ctx.font = "bold 13px 'Noto Sans TC', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("指標方向示意：擴張 vs 衰退", 14, 22);
+
+    var rows = [
+      { name: "實質 GDP", exp: 1, rec: -1 },
+      { name: "失業率", exp: -1, rec: 1 },
+      { name: "投資", exp: 1, rec: -1 },
+      { name: "消費", exp: 1, rec: -1 },
+      { name: "轉移支付", exp: -1, rec: 1 }
+    ];
+    var top = 40;
+    var rowH = (H - top - 16) / rows.length;
+    var col1 = W * 0.28;
+    var col2 = W * 0.55;
+    var col3 = W * 0.82;
+
+    ctx.font = "11px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = "#5a6a7e";
+    ctx.textAlign = "center";
+    ctx.fillText("擴張", col2, top - 4);
+    ctx.fillText("衰退", col3, top - 4);
+
+    rows.forEach(function (r, i) {
+      var y = top + i * rowH + rowH * 0.55;
+      ctx.fillStyle = "#1a2332";
+      ctx.textAlign = "left";
+      ctx.font = "12px 'Noto Sans TC', sans-serif";
+      ctx.fillText(r.name, 14, y + 4);
+
+      function arrow(x, dir) {
+        ctx.strokeStyle = dir > 0 ? "#0d7a4f" : "#b42318";
+        ctx.fillStyle = dir > 0 ? "#0d7a4f" : "#b42318";
+        ctx.lineWidth = 2.2;
+        var h = 14;
+        ctx.beginPath();
+        if (dir > 0) {
+          ctx.moveTo(x, y + h / 2);
+          ctx.lineTo(x, y - h / 2);
+          ctx.lineTo(x - 5, y - h / 2 + 6);
+          ctx.moveTo(x, y - h / 2);
+          ctx.lineTo(x + 5, y - h / 2 + 6);
+        } else {
+          ctx.moveTo(x, y - h / 2);
+          ctx.lineTo(x, y + h / 2);
+          ctx.lineTo(x - 5, y + h / 2 - 6);
+          ctx.moveTo(x, y + h / 2);
+          ctx.lineTo(x + 5, y + h / 2 - 6);
+        }
+        ctx.stroke();
+      }
+      arrow(col2, r.exp);
+      arrow(col3, r.rec);
+    });
+  }
+
+  /* ========== Questions ========== */
+  var QUESTIONS = [
+    {
+      stage: "定義",
+      text: "經濟周期是指：",
+      options: [
+        "物價水平長期持續上升的現象",
+        "實質 GDP 圍繞其長期趨勢的短期波動",
+        "名義 GDP 每年以固定比率增長",
+        "政府財政赤字的周期性出現"
+      ],
+      answer: 1,
+      explain: "經濟周期強調實質產出在短期內相對長期趨勢的上下波動，而非通脹、固定增長率或財赤本身。"
+    },
+    {
+      stage: "衰退特徵",
+      text: "下列哪一項最可能在經濟衰退期間出現？",
+      options: [
+        "失業率下跌，轉移支付減少",
+        "實質 GDP 高於長期趨勢，投資上升",
+        "消費減少，失業救濟金總額上升",
+        "頂峰剛過後物價必然即時大幅下跌"
+      ],
+      answer: 2,
+      explain: "衰退時消費傾向下跌，失業上升令失業救濟等轉移支付增加。A、B 屬擴張特徵；D 把通脹放緩說得過絕對。"
+    },
+    {
+      stage: "考試陷阱",
+      text: "某經濟體連續數季實質 GDP 仍正增長，但增長率明顯低於長期平均，且產出缺口持續擴大為負。按經濟周期概念，此經濟最可能處於：",
+      options: [
+        "頂峰",
+        "強勁擴張",
+        "收縮／衰退階段",
+        "已超越潛在產出的過熱階段"
+      ],
+      answer: 2,
+      explain: "重點不在「是否正增長」，而在相對長期趨勢／潛在產出是否惡化。產出缺口持續為負且惡化，屬收縮／衰退特徵。"
+    },
+    {
+      stage: "指標對照",
+      text: "比較擴張與衰退，下列配對何者正確？",
+      figure: "indicators",
+      options: [
+        "擴張：投資↓；衰退：轉移支付↓",
+        "擴張：失業↑；衰退：消費↑",
+        "擴張：實質 GDP 相對趨勢↑；衰退：物價上升壓力↑",
+        "擴張：消費↑、失業↓；衰退：投資↓、轉移支付↑"
+      ],
+      answer: 3,
+      explain: "擴張時消費升、失業跌；衰退時投資跌、轉移支付升（逆周期）。上圖箭嘴亦可對照。"
+    },
+    {
+      stage: "頂峰",
+      text: "下列關於頂峰（peak）的叙述，哪一項最恰當？",
+      figure: "peak",
+      options: [
+        "頂峰是失業率最高的時期",
+        "頂峰表示實質 GDP 處於該周期的最高點，之後可能轉入收縮",
+        "頂峰時轉移支付通常達至最高",
+        "經濟一旦到達頂峰，實質 GDP 必須立刻變為負增長"
+      ],
+      answer: 1,
+      explain: "頂峰是產出的周期高點與轉折點。失業／轉移支付最高通常在谷底附近；頂峰後不必然即時負增長。"
+    },
+    {
+      stage: "谷底與復甦",
+      text: "經濟到達谷底之後，通常接著進入哪個階段？該階段初期失業與投資的典型方向是：",
+      figure: "trough",
+      options: [
+        "繼續加深衰退；失業再升、投資再跌",
+        "復甦／新一輪擴張初期；失業開始回落、投資開始回升",
+        "立即處於頂峰；失業最低、通脹最高",
+        "長期停滯於谷底；指標完全不變"
+      ],
+      answer: 1,
+      explain: "谷底是轉折點，其後進入復甦。失業開始改善、投資回升；惟復甦初期失業或仍偏高（滯後）。"
+    },
+    {
+      stage: "順／逆周期",
+      text: "下列哪一組變數，在經濟周期中通常被視為「逆周期」（與經濟活動方向相反）？",
+      options: [
+        "實質 GDP 與私人投資",
+        "消費與企業利潤",
+        "失業率與（多數）轉移支付",
+        "物價水平與出口訂單"
+      ],
+      answer: 2,
+      explain: "失業率、多數轉移支付與經濟反向：衰退時失業升、救濟等轉移支付增。實質 GDP、投資、消費多為順周期。"
+    },
+    {
+      stage: "概念辨析",
+      text: "有關「經濟增長」與「經濟周期」的分別，下列哪一項最正確？",
+      options: [
+        "兩者完全相同，只是用詞不同",
+        "經濟增長指短期圍繞趨勢的波動；經濟周期指長期潛在產出上升",
+        "經濟增長指長期潛在產出／趨勢上升；經濟周期指短期圍繞趨勢的波動",
+        "只要名義 GDP 上升，就同時代表經濟增長與周期擴張"
+      ],
+      answer: 2,
+      explain: "經濟增長＝長期趨勢／潛在產出上升；經濟周期＝短期圍繞該趨勢的波動。兩者相關但不是同一概念；判斷周期宜用實質 GDP。"
+    }
+  ];
+
+  /* ========== State ========== */
+  var idx = 0;
+  var score = 0;
+  var answered = false;
+  var gotRight = false;
+
+  var el = {
+    intro: document.getElementById("intro"),
+    quiz: document.getElementById("quiz"),
+    result: document.getElementById("result"),
+    progressLabel: document.getElementById("progressLabel"),
+    scoreLabel: document.getElementById("scoreLabel"),
+    progressBar: document.getElementById("progressBar"),
+    stageChip: document.getElementById("stageChip"),
+    qText: document.getElementById("qText"),
+    options: document.getElementById("options"),
+    feedback: document.getElementById("feedback"),
+    retryBtn: document.getElementById("retryBtn"),
+    nextBtn: document.getElementById("nextBtn"),
+    qFigure: document.getElementById("qFigure"),
+    qCanvas: document.getElementById("qCanvas"),
+    finalScore: document.getElementById("finalScore"),
+    resultMsg: document.getElementById("resultMsg"),
+    cycleChart: document.getElementById("cycleChart"),
+    resultChart: document.getElementById("resultChart")
+  };
+
+  function show(section) {
+    el.intro.classList.toggle("hidden", section !== "intro");
+    el.quiz.classList.toggle("hidden", section !== "quiz");
+    el.result.classList.toggle("hidden", section !== "result");
+  }
+
+  function renderFigure(kind) {
+    if (!kind) {
+      el.qFigure.classList.add("hidden");
+      return;
+    }
+    el.qFigure.classList.remove("hidden");
+    requestAnimationFrame(function () {
+      if (kind === "indicators") drawIndicatorCompare(el.qCanvas);
+      else if (kind === "peak") drawCycleChart(el.qCanvas, { highlight: "peak" });
+      else if (kind === "trough") drawCycleChart(el.qCanvas, { highlight: "trough" });
+      else drawCycleChart(el.qCanvas, {});
+    });
+  }
+
+  function renderQuestion() {
+    var q = QUESTIONS[idx];
+    answered = false;
+    gotRight = false;
+    el.progressLabel.textContent = "第 " + (idx + 1) + " / " + QUESTIONS.length + " 題";
+    el.scoreLabel.textContent = "得分：" + score;
+    el.progressBar.style.width = ((idx / QUESTIONS.length) * 100) + "%";
+    el.stageChip.textContent = "主題：" + q.stage;
+    el.qText.textContent = q.text;
+    el.feedback.className = "feedback";
+    el.feedback.textContent = "";
+    el.retryBtn.disabled = true;
+    el.nextBtn.disabled = true;
+    el.nextBtn.textContent = idx === QUESTIONS.length - 1 ? "查看成績" : "下一題";
+    renderFigure(q.figure || null);
+
+    el.options.innerHTML = "";
+    var letters = ["A", "B", "C", "D"];
+    q.options.forEach(function (opt, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt";
+      btn.innerHTML = '<span class="letter">' + letters[i] + '</span><span class="label">' + opt + "</span>";
+      btn.addEventListener("click", function () { onPick(i, btn); });
+      el.options.appendChild(btn);
+    });
+  }
+
+  function onPick(choice, btn) {
+    if (answered) return;
+    answered = true;
+    var q = QUESTIONS[idx];
+    var buttons = el.options.querySelectorAll(".opt");
+    buttons.forEach(function (b) { b.disabled = true; });
+
+    if (choice === q.answer) {
+      gotRight = true;
+      score += 1;
+      btn.classList.add("correct");
+      el.feedback.className = "feedback show ok";
+      el.feedback.innerHTML = "<strong>✓ 正確</strong>" + q.explain;
+    } else {
+      gotRight = false;
+      btn.classList.add("wrong");
+      buttons[q.answer].classList.add("correct");
+      el.feedback.className = "feedback show bad";
+      el.feedback.innerHTML = "<strong>✗ 不正確</strong>正確答案是 " +
+        ["A", "B", "C", "D"][q.answer] + "。" + q.explain;
+    }
+    el.scoreLabel.textContent = "得分：" + score;
+    el.retryBtn.disabled = false;
+    el.nextBtn.disabled = false;
+    el.progressBar.style.width = (((idx + 1) / QUESTIONS.length) * 100) + "%";
+  }
+
+  function retryCurrent() {
+    if (gotRight) score = Math.max(0, score - 1);
+    renderQuestion();
+  }
+
+  function nextQuestion() {
+    if (idx >= QUESTIONS.length - 1) {
+      showResult();
+      return;
+    }
+    idx += 1;
+    renderQuestion();
+  }
+
+  function showResult() {
+    show("result");
+    el.finalScore.textContent = score + " / " + QUESTIONS.length;
+    var pct = score / QUESTIONS.length;
+    var msg;
+    if (pct === 1) msg = "滿分！經濟周期概念掌握得很穩。";
+    else if (pct >= 0.75) msg = "表現不錯，再留意「正增長仍可能衰退」等陷阱。";
+    else if (pct >= 0.5) msg = "已有基礎，建議重溫指標對照表與轉移支付逆周期。";
+    else msg = "建議先回顧階段定義與指標方向，再重做一次。";
+    el.resultMsg.textContent = msg;
+    requestAnimationFrame(function () {
+      drawCycleChart(el.resultChart, {});
+    });
+  }
+
+  function startQuiz() {
+    idx = 0;
+    score = 0;
+    show("quiz");
+    renderQuestion();
+  }
+
+  function restart() {
+    startQuiz();
+  }
+
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+  el.retryBtn.addEventListener("click", retryCurrent);
+  el.nextBtn.addEventListener("click", nextQuestion);
+  document.getElementById("restartBtn").addEventListener("click", restart);
+  document.getElementById("reviewBtn").addEventListener("click", function () {
+    show("intro");
+    requestAnimationFrame(function () { drawCycleChart(el.cycleChart, {}); });
+  });
+
+  function redrawAll() {
+    drawCycleChart(el.cycleChart, {});
+    if (!el.result.classList.contains("hidden")) drawCycleChart(el.resultChart, {});
+    if (!el.quiz.classList.contains("hidden")) {
+      var q = QUESTIONS[idx];
+      if (q && q.figure) renderFigure(q.figure);
+    }
+  }
+
+  window.addEventListener("resize", function () {
+    clearTimeout(window.__cycleResize);
+    window.__cycleResize = setTimeout(redrawAll, 120);
+  });
+
+  // Initial draw
+  requestAnimationFrame(function () { drawCycleChart(el.cycleChart, {}); });
+})();
+  </script>
+</body>
+</html>
