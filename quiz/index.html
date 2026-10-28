@@ -347,7 +347,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     var W = cssW, H = cssH;
-    var padL = 52, padR = 18, padT = 28, padB = 42;
+    var padL = 56, padR = 20, padT = 32, padB = 46;
     var plotW = W - padL - padR;
     var plotH = H - padT - padB;
 
@@ -364,20 +364,20 @@
     ctx.lineTo(padL + plotW, padT + plotH);
     ctx.stroke();
 
-    // Axis labels
+    // Axis labels (Traditional Chinese, readable)
     ctx.fillStyle = "#5a6a7e";
-    ctx.font = "12px 'Noto Sans TC', 'PingFang HK', sans-serif";
+    ctx.font = "12px 'Noto Sans TC', 'PingFang HK', 'Microsoft JhengHei', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("時間 →", padL + plotW * 0.5, H - 10);
+    ctx.fillText("時間 →", padL + plotW * 0.5, H - 12);
     ctx.save();
-    ctx.translate(14, padT + plotH * 0.5);
+    ctx.translate(16, padT + plotH * 0.5);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("實質 GDP", 0, 0);
     ctx.restore();
 
     // Trend line (slight upward slope)
-    var trendY0 = padT + plotH * 0.55;
-    var trendY1 = padT + plotH * 0.38;
+    var trendY0 = padT + plotH * 0.58;
+    var trendY1 = padT + plotH * 0.40;
     ctx.strokeStyle = "#c45c26";
     ctx.lineWidth = 1.6;
     ctx.setLineDash([7, 5]);
@@ -387,47 +387,63 @@
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = "#c45c26";
-    ctx.font = "11px 'Noto Sans TC', sans-serif";
+    ctx.font = "11px 'Noto Sans TC', 'PingFang HK', sans-serif";
     ctx.textAlign = "right";
     ctx.fillText("長期趨勢", padL + plotW - 4, trendY1 - 8);
 
-    // Cycle path: smooth curve via parametric points
-    // Stages along x: expansion 0-0.28, peak~0.32, contraction 0.36-0.62, trough~0.66, recovery 0.70-1
+    // Smooth sine-like cycle: peak ~0.28, trough ~0.68, then recovery
+    // Canvas y grows downward → local minimum y = 頂峰; local maximum y = 谷底
     function cycleY(t) {
-      // t in [0,1]; sine-like wave with rising envelope around trend
       var trend = trendY0 + (trendY1 - trendY0) * t;
-      var amp = plotH * 0.28;
-      // phase: start mid-rising, peak, trough, recover
-      var phase = -Math.PI / 2 + t * Math.PI * 2.05;
-      return trend - Math.sin(phase) * amp * (0.85 + 0.15 * t);
+      var amp = plotH * 0.26 * (0.92 + 0.08 * t);
+      var phase = Math.PI / 2 + (2 * Math.PI / 0.80) * (t - 0.28);
+      return trend - Math.sin(phase) * amp;
     }
 
-    // Sample points
+    // Dense sample for smooth curve + accurate extrema
     var pts = [];
-    var n = 120;
+    var n = 240;
     for (var i = 0; i <= n; i++) {
       var t = i / n;
       pts.push({ x: padL + t * plotW, y: cycleY(t), t: t });
     }
 
-    // Optional highlight band
+    // True local extrema (not hardcoded t guesses)
+    var peak = pts[0];
+    var trough = pts[0];
+    for (var k = 1; k < pts.length - 1; k++) {
+      var y = pts[k].y, yp = pts[k - 1].y, yn = pts[k + 1].y;
+      if (y <= yp && y <= yn && y < peak.y) peak = pts[k];
+      if (y >= yp && y >= yn && y > trough.y) trough = pts[k];
+    }
+    // Fallback: global min/max in interior if no local extremum found
+    if (peak === pts[0] || trough === pts[0]) {
+      for (var m = 1; m < pts.length - 1; m++) {
+        if (pts[m].y < peak.y) peak = pts[m];
+        if (pts[m].y > trough.y) trough = pts[m];
+      }
+    }
+
+    var tPeak = peak.t;
+    var tTrough = trough.t;
     var bands = {
-      expansion: [0.02, 0.28],
-      peak: [0.26, 0.36],
-      contraction: [0.36, 0.62],
-      trough: [0.60, 0.72],
-      recovery: [0.70, 0.98]
+      expansion: [Math.max(0.02, tPeak - 0.26), Math.max(0.04, tPeak - 0.02)],
+      peak: [Math.max(0, tPeak - 0.05), Math.min(1, tPeak + 0.05)],
+      contraction: [Math.min(0.98, tPeak + 0.02), Math.max(tPeak + 0.04, tTrough - 0.02)],
+      trough: [Math.max(0, tTrough - 0.05), Math.min(1, tTrough + 0.05)],
+      recovery: [Math.min(0.98, tTrough + 0.02), 0.98]
     };
     if (highlight && bands[highlight]) {
       var b = bands[highlight];
       ctx.fillStyle = "rgba(30, 90, 150, 0.10)";
-      ctx.fillRect(padL + b[0] * plotW, padT, (b[1] - b[0]) * plotW, plotH);
+      ctx.fillRect(padL + b[0] * plotW, padT, Math.max(4, (b[1] - b[0]) * plotW), plotH);
     }
 
-    // Draw cycle curve
+    // Draw smooth cycle curve
     ctx.strokeStyle = "#1e5a96";
     ctx.lineWidth = 2.6;
     ctx.lineJoin = "round";
+    ctx.lineCap = "round";
     ctx.beginPath();
     for (var j = 0; j < pts.length; j++) {
       if (j === 0) ctx.moveTo(pts[j].x, pts[j].y);
@@ -435,39 +451,34 @@
     }
     ctx.stroke();
 
-    // Turning points: peak & trough
-    function nearest(tTarget) {
-      var best = pts[0], bd = 1;
-      for (var k = 0; k < pts.length; k++) {
-        var d = Math.abs(pts[k].t - tTarget);
-        if (d < bd) { bd = d; best = pts[k]; }
-      }
-      return best;
-    }
-    var peak = nearest(0.31);
-    var trough = nearest(0.66);
-
     function markPoint(p, label, above) {
+      // Dot exactly on the curve extremum
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 5.5, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = "#1e5a96";
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, 4.2, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#1a2332";
-      ctx.font = "bold 12px 'Noto Sans TC', sans-serif";
+      ctx.font = "bold 12px 'Noto Sans TC', 'PingFang HK', 'Microsoft JhengHei', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(label, p.x, above ? p.y - 12 : p.y + 18);
+      // Keep label clear of the marker / axes
+      var ly = above ? Math.max(padT + 12, p.y - 14) : Math.min(padT + plotH - 4, p.y + 20);
+      ctx.fillText(label, p.x, ly);
     }
     markPoint(peak, "頂峰", true);
     markPoint(trough, "谷底", false);
 
-    // Stage labels along bottom of plot
-    ctx.font = "11px 'Noto Sans TC', sans-serif";
+    // Stage labels centered in each segment
+    ctx.font = "11px 'Noto Sans TC', 'PingFang HK', 'Microsoft JhengHei', sans-serif";
     ctx.fillStyle = "#5a6a7e";
     ctx.textAlign = "center";
     var labels = [
-      { t: 0.15, text: "擴張" },
-      { t: 0.48, text: "收縮／衰退" },
-      { t: 0.84, text: "復甦" }
+      { t: (0.02 + tPeak) / 2, text: "擴張" },
+      { t: (tPeak + tTrough) / 2, text: "收縮／衰退" },
+      { t: (tTrough + 0.98) / 2, text: "復甦" }
     ];
     labels.forEach(function (L) {
       ctx.fillText(L.text, padL + L.t * plotW, padT + plotH - 8);
@@ -568,7 +579,7 @@
         "頂峰剛過後物價必然即時大幅下跌"
       ],
       answer: 2,
-      explain: "衰退時消費傾向下跌，失業上升令失業救濟等轉移支付增加。A、B 屬擴張特徵；D 把通脹放緩說得過絕對。"
+      explain: "衰退時消費傾向下跌，失業上升令失業救濟等轉移支付增加。其餘選項屬擴張特徵，或把通脹放緩說得過絕對。"
     },
     {
       stage: "考試陷阱",
@@ -647,7 +658,37 @@
     }
   ];
 
+  /* ========== Shuffle helpers ========== */
+  function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
+    }
+    return a;
+  }
+
+  /** Build a playable copy with options shuffled; answer index follows the correct content. */
+  function shuffleQuestion(q) {
+    var order = shuffleArray([0, 1, 2, 3]);
+    return {
+      stage: q.stage,
+      text: q.text,
+      figure: q.figure,
+      explain: q.explain,
+      options: order.map(function (i) { return q.options[i]; }),
+      answer: order.indexOf(q.answer)
+    };
+  }
+
+  function buildDeck() {
+    return QUESTIONS.map(shuffleQuestion);
+  }
+
   /* ========== State ========== */
+  var deck = [];
   var idx = 0;
   var score = 0;
   var answered = false;
@@ -694,20 +735,24 @@
     });
   }
 
+  function currentQ() {
+    return deck[idx];
+  }
+
   function renderQuestion() {
-    var q = QUESTIONS[idx];
+    var q = currentQ();
     answered = false;
     gotRight = false;
-    el.progressLabel.textContent = "第 " + (idx + 1) + " / " + QUESTIONS.length + " 題";
+    el.progressLabel.textContent = "第 " + (idx + 1) + " / " + deck.length + " 題";
     el.scoreLabel.textContent = "得分：" + score;
-    el.progressBar.style.width = ((idx / QUESTIONS.length) * 100) + "%";
+    el.progressBar.style.width = ((idx / deck.length) * 100) + "%";
     el.stageChip.textContent = "主題：" + q.stage;
     el.qText.textContent = q.text;
     el.feedback.className = "feedback";
     el.feedback.textContent = "";
     el.retryBtn.disabled = true;
     el.nextBtn.disabled = true;
-    el.nextBtn.textContent = idx === QUESTIONS.length - 1 ? "查看成績" : "下一題";
+    el.nextBtn.textContent = idx === deck.length - 1 ? "查看成績" : "下一題";
     renderFigure(q.figure || null);
 
     el.options.innerHTML = "";
@@ -725,7 +770,7 @@
   function onPick(choice, btn) {
     if (answered) return;
     answered = true;
-    var q = QUESTIONS[idx];
+    var q = currentQ();
     var buttons = el.options.querySelectorAll(".opt");
     buttons.forEach(function (b) { b.disabled = true; });
 
@@ -746,16 +791,18 @@
     el.scoreLabel.textContent = "得分：" + score;
     el.retryBtn.disabled = false;
     el.nextBtn.disabled = false;
-    el.progressBar.style.width = (((idx + 1) / QUESTIONS.length) * 100) + "%";
+    el.progressBar.style.width = (((idx + 1) / deck.length) * 100) + "%";
   }
 
   function retryCurrent() {
     if (gotRight) score = Math.max(0, score - 1);
+    // Reshuffle this question's options on retry
+    deck[idx] = shuffleQuestion(QUESTIONS[idx]);
     renderQuestion();
   }
 
   function nextQuestion() {
-    if (idx >= QUESTIONS.length - 1) {
+    if (idx >= deck.length - 1) {
       showResult();
       return;
     }
@@ -765,8 +812,8 @@
 
   function showResult() {
     show("result");
-    el.finalScore.textContent = score + " / " + QUESTIONS.length;
-    var pct = score / QUESTIONS.length;
+    el.finalScore.textContent = score + " / " + deck.length;
+    var pct = score / deck.length;
     var msg;
     if (pct === 1) msg = "滿分！經濟周期概念掌握得很穩。";
     else if (pct >= 0.75) msg = "表現不錯，再留意「正增長仍可能衰退」等陷阱。";
@@ -779,6 +826,7 @@
   }
 
   function startQuiz() {
+    deck = buildDeck(); // reshuffle correct letter among A–D every start/restart
     idx = 0;
     score = 0;
     show("quiz");
@@ -802,7 +850,7 @@
     drawCycleChart(el.cycleChart, {});
     if (!el.result.classList.contains("hidden")) drawCycleChart(el.resultChart, {});
     if (!el.quiz.classList.contains("hidden")) {
-      var q = QUESTIONS[idx];
+      var q = deck[idx] || QUESTIONS[idx];
       if (q && q.figure) renderFigure(q.figure);
     }
   }
