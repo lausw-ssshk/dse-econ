@@ -5,6 +5,13 @@
 
 每節 10 題，合共 **110** 題。每題附 **答案** 與簡短 **講解**。
 
+
+## 互動練習
+
+線上練習頁（GitHub Pages，可離線下載單檔）：
+
+- https://lausw-ssshk.github.io/dse-econ/quiz/mc/
+
 ## 章節一覽
 
 | 檔案 | 章節 |

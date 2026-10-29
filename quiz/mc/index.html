@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="DSE 經濟科選擇題練習：11 章節共 110 題，即時對錯與講解" />
+  <title>DSE 經濟｜選擇題練習</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #1a2332;
+      --muted: #5a6a7e;
+      --primary: #1e5a96;
+      --primary-soft: #e8f1fa;
+      --ok: #0d7a4f;
+      --ok-bg: #e6f6ef;
+      --bad: #b42318;
+      --bad-bg: #fdecea;
+      --border: #d5dee9;
+      --shadow: 0 8px 24px rgba(26, 35, 50, 0.08);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", "Heiti TC", sans-serif;
+      background: linear-gradient(160deg, #eef4fb 0%, #f8fafc 45%, #eef6f2 100%);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+    header { text-align: center; margin-bottom: 20px; }
+    header .badge {
+      display: inline-block;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.55rem; letter-spacing: 0.02em; }
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin: 0; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 20px;
+      margin-bottom: 16px;
+    }
+    .hidden { display: none !important; }
+    h2 { margin: 0 0 10px; font-size: 1.15rem; }
+    .muted { color: var(--muted); font-size: 0.95rem; margin: 0 0 14px; }
+
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 14px 0 6px;
+    }
+    .topic-btn {
+      appearance: none;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      color: inherit;
+      transition: border-color 0.15s, background 0.15s, transform 0.05s;
+    }
+    .topic-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .topic-btn:active { transform: scale(0.995); }
+    .topic-btn .t-title { font-weight: 700; display: block; margin-bottom: 2px; }
+    .topic-btn .t-meta { font-size: 0.82rem; color: var(--muted); }
+    .topic-btn.all {
+      grid-column: 1 / -1;
+      background: var(--primary-soft);
+      border-color: #b9d0e8;
+    }
+    .topic-btn.all .t-title { color: var(--primary); }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .bar {
+      height: 8px;
+      background: #e7eef6;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #1e5a96, #2f8f6b);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+    .section-chip {
+      display: inline-block;
+      font-size: 0.78rem;
+      background: #f0f4f8;
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin: 0 0 16px;
+      white-space: pre-wrap;
+    }
+    .options { display: grid; gap: 10px; }
+    .opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      transition: border-color 0.15s, background 0.15s, transform 0.05s;
+    }
+    .opt:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .opt:active:not(:disabled) { transform: scale(0.995); }
+    .opt:disabled { cursor: default; opacity: 1; }
+    .opt .letter {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #eef3f8;
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .opt .label { flex: 1; padding-top: 2px; }
+    .opt.correct { border-color: var(--ok); background: var(--ok-bg); }
+    .opt.correct .letter { background: var(--ok); color: #fff; }
+    .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+    .opt.wrong .letter { background: var(--bad); color: #fff; }
+    .opt.dim { opacity: 0.55; }
+
+    .feedback {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { background: var(--ok-bg); color: #0a5c3c; border: 1px solid #b7e4ce; }
+    .feedback.bad { background: var(--bad-bg); color: #8a1c14; border: 1px solid #f5c2bc; }
+    .feedback strong { display: block; margin-bottom: 4px; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    button.btn {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.05s;
+    }
+    button.btn:active { transform: scale(0.98); }
+    button.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: #eef3f8; color: var(--ink); }
+    .btn-ghost { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+
+    .result { text-align: center; }
+    .result .score-big {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 8px 0;
+    }
+    .result p { color: var(--muted); }
+    .result-msg { font-size: 1.05rem; font-weight: 600; color: var(--ink); margin: 8px 0 16px; }
+    .result-detail {
+      text-align: left;
+      background: #f5f8fc;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge">DSE Economics · MC</div>
+      <h1>DSE 經濟｜選擇題練習</h1>
+      <p class="subtitle">11 章節 · 共 110 題 · 即時對錯與講解 · 可離線使用</p>
+    </header>
+
+    <section id="picker" class="card">
+      <h2>選擇章節</h2>
+      <p class="muted">揀一個課題開始練習，或選「全部」一次做齊 110 題。每次作答後會即時顯示對錯與簡短講解；選項次序會打亂。</p>
+      <div id="topicGrid" class="topic-grid"></div>
+    </section>
+
+    <section id="quiz" class="card hidden">
+      <div class="progress-row">
+        <span id="progressLabel">第 1 / 10 題</span>
+        <span id="scoreLabel">得分：0</span>
+      </div>
+      <div class="bar"><span id="progressBar"></span></div>
+      <div id="sectionChip" class="section-chip"></div>
+      <p id="qText" class="q-text"></p>
+      <div id="options" class="options" role="group" aria-label="選項"></div>
+      <div id="feedback" class="feedback" role="status"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary hidden" id="nextBtn">下一題</button>
+        <button type="button" class="btn btn-secondary" id="retryBtn">重做本題</button>
+        <button type="button" class="btn btn-ghost" id="backBtn">返回章節</button>
+      </div>
+    </section>
+
+    <section id="result" class="card result hidden">
+      <h2>練習完成</h2>
+      <div class="score-big" id="finalScore">0 / 0</div>
+      <p id="finalPct"></p>
+      <p class="result-msg" id="resultMsg"></p>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="actions" style="justify-content:center">
+        <button type="button" class="btn btn-primary" id="restartSameBtn">再做一次（同章節）</button>
+        <button type="button" class="btn btn-secondary" id="restartAllBtn">返回章節選擇</button>
+      </div>
+    </section>
+
+    <footer>
+      <p>題目來源：本倉庫 <a href="../../mc/">mc/</a> 原創練習 · 非考評局試卷</p>
+      <p><a href="../">經濟周期互動練習</a></p>
+    </footer>
+  </div>
+
+  <script>
+  const BANK = {"sections":[{"id":"21.1-經濟周期","title":"21.1 經濟周期","questions":[{"stem":"下列哪項最能描述經濟周期？","options":["實際本地生產總值圍繞長期趨勢上下波動的重複現象","物價水平長期持續上升的過程","勞動力參與率逐年單向下降","名義匯率每日的隨機波動"],"answerIndex":0,"explanation":"經濟周期指實際產出圍繞潛在／長期趨勢的擴張與收縮循環，並非單純通脹或匯率噪音。"},{"stem":"在經濟周期的擴張期，下列哪組現象最常見？","options":["失業率上升、企業投資減少","實際產出上升、就業增加、企業利潤改善","物價必然急跌、銀行收緊所有貸款","政府必定出現巨額財政盈餘"],"answerIndex":1,"explanation":"擴張期產出與就業通常回升；利潤改善亦常見。失業率上升屬收縮／衰退特徵。"},{"stem":"若實際本地生產總值低於潛在本地生產總值，經濟處於","options":["通脹缺口","充分就業均衡且無產出缺口","通縮缺口（負產出缺口）","必然處於商業周期的頂峰"],"answerIndex":2,"explanation":"實際產出低於潛在產出稱為負產出缺口或通縮缺口，資源未充分利用。"},{"stem":"下列哪項通常被視為衰退的常見特徵？","options":["單一月份出口輕微下跌","股市單日跌幅超過 1%","名義工資一次過上調","持續數季的實際產出下降與失業率上升"],"answerIndex":3,"explanation":"衰退一般指產出持續收縮並伴隨失業惡化；短暫或單一指標波動不足以界定。"},{"stem":"領先指標（leading indicator）的主要用途是","options":["幫助預測未來經濟活動的轉向","事後確認經濟已進入谷底","完全取代國民收入統計","直接決定央行的法定準備金率"],"answerIndex":0,"explanation":"領先指標（如新訂單、建築許可）往往先於整體經濟轉向，用作預測而非事後確認。"},{"stem":"當經濟由頂峰轉入收縮期，下列哪項最可能發生？","options":["產能利用率上升、存貨加速累積且需求同步急升","企業減少招聘與投資，部分產能閒置","所有產業必然同時錄得創紀錄盈利","實際利率必定為負且持續多年"],"answerIndex":1,"explanation":"收縮期需求放緩，企業傾向減投資、減招聘，產能閒置增加。"},{"stem":"潛在產出（potential output）主要取決於","options":["短期內投機性熱錢流入規模","當期股票市場成交額","勞動力、資本存量與技術等生產要素及生產力","每日外匯成交量"],"answerIndex":2,"explanation":"潛在產出反映在正常資源利用率下的產出能力，由要素供給與生產力決定。"},{"stem":"下列關於經濟周期的陳述，哪項正確？","options":["每個周期的長度與振幅必然完全相同","市場經濟下不可能出現周期波動","只要名義 GDP 上升，實際經濟必無衰退","政府政策與外來衝擊可影響周期的幅度與持續時間"],"answerIndex":3,"explanation":"周期並非機械重複；政策、外圍環境與衝擊會改變振幅與長度。名義 GDP 可因通脹上升而掩蓋實際收縮。"},{"stem":"若一經濟體連續兩季實際 GDP 按季收縮，傳媒常稱之為技術性衰退。此定義的局限是","options":["它要求物價必須同時急跌才算數","它完全忽略就業、收入與廣泛產業表現等其他指標","它只適用於固定匯率制度","它等同於官方宣佈進入蕭條"],"answerIndex":1,"explanation":"「兩季收縮」是簡便經驗法則，嚴謹判斷尚需就業、收入廣度等；並非等同蕭條定義。"},{"stem":"在復甦初期，下列哪項最可能出現？","options":["產出開始回升，但失業率可能仍高或回落滯後（失業滯後）","失業率即時跌至零","所有企業同時大幅加價且需求崩潰","潛在產出必然在一季內倍增"],"answerIndex":0,"explanation":"產出先回升時，企業或先提高工時再用新人，失業率回落常滯後於產出復甦。"}]},{"id":"21.2-通貨膨脹和通貨緊縮","title":"21.2 通貨膨脹和通貨緊縮","questions":[{"stem":"通貨膨脹是指","options":["某幾類奢侈品價格一次性上升","整體物價水平持續上升的過程","名義匯率升值","實質利率上升"],"answerIndex":1,"explanation":"通脹指一般物價水平持續上升，而非單一商品或一次性調價。"},{"stem":"消費物價指數（CPI）上升 3%，最直接表示","options":["一籃子消費品及服務的價格平均上升約 3%","所有工資必然實質上升 3%","名義 GDP 必定上升 3%","貨幣供應量剛好增加 3%"],"answerIndex":0,"explanation":"CPI 衡量既定消費籃的平均價格變動；不直接等於工資、GDP 或貨幣供應變幅。"},{"stem":"預期外的通脹最可能損害哪一類人？","options":["以浮動利率借款且收入隨物價調整的債務人","能即時按通脹調整薪金的工會成員","持有固定名義利息資產的貸款人／債權人","持有實物資產且價格同步上升的業主"],"answerIndex":2,"explanation":"未預期通脹降低債權人收回的實質購買力；債務人往往受益。"},{"stem":"通貨緊縮是指","options":["經濟增長率下降但物價仍上升","政府財政赤字縮小","失業率單一月份回落","整體物價水平持續下跌"],"answerIndex":3,"explanation":"通縮指一般物價水平持續下降。"},{"stem":"需求拉動型通脹的典型起因是","options":["進口原材料價格下跌","總需求持續超過經濟在現行物價下的供應能力","勞動生產力大幅提升而名義需求不變","央行抽走基礎貨幣且信貸凍結"],"answerIndex":1,"explanation":"需求拉動指 Aggregate Demand 過旺推高物價；供應改善或貨幣緊縮通常抑制通脹。"},{"stem":"成本推動型通脹可能源自","options":["石油等重要投入品價格急升或工資成本顯著上漲","消費意欲突然崩潰","出口訂單減少","銀行提高存款準備並大幅收緊信貸"],"answerIndex":0,"explanation":"成本推動來自生產成本上升（能源、工資等）迫使企業提價。"},{"stem":"溫和通脹對經濟的一項可能好處是","options":["完全消除相對價格調整的需要","保證每個人的實質收入每年上升","自動令貿易逆差消失","使名義工資下調更具彈性變得全無必要，因為實質工資可透過通脹緩慢調整"],"answerIndex":3,"explanation":"若名義工資僵性向下，溫和通脹可協助實質工資調整；但並非人人實質收入都升。"},{"stem":"惡性通貨膨脹的主要特徵是","options":["CPI 連續兩個月輕微下跌","只有資產價格上升而消費物價不變","年通脹率極高且貨幣迅速喪失交易媒介功能","實質 GDP 增長剛好等於 2%"],"answerIndex":2,"explanation":"惡性通脹下物價飛漲、貨幣信心崩潰，人們急於拋售貨幣。"},{"stem":"下列哪項是通脹的菜單成本（menu costs）例子？","options":["餐廳因經常改價而印刷新菜單及更新標價的開支","家庭因持有現金而損失的購買力","債權人收回較少實質本息","工人談判加薪所花的時間"],"answerIndex":0,"explanation":"菜單成本指企業因通脹而頻繁更改標價所衍生的實物與行政成本。"},{"stem":"若名目利率為 5%，預期通脹率為 2%，按費雪效應近似，實質利率約為","options":["7%","3%","2.5%","10%"],"answerIndex":1,"explanation":"實質利率 ≈ 名目利率 − 預期通脹率 = 5% − 2% = 3%。"}]},{"id":"21.3-通貨膨脹與貨幣數量論","title":"21.3 通貨膨脹與貨幣數量論","questions":[{"stem":"貨幣數量方程式通常寫成","options":["M + V = P + Y","M / V = P / Y","M × V = P × Y","M − V = P − Y"],"answerIndex":2,"explanation":"古典數量方程式為貨幣供應×流通速度＝物價×實質產出（或交易量）。"},{"stem":"若貨幣流通速度 V 與實質產出 Y 短期大致穩定，貨幣供應 M 增加 10%，按數量論，物價 P 大致","options":["下跌 10%","不變","上升 100%","上升 10%"],"answerIndex":3,"explanation":"V、Y 不變時，%ΔM ≈ %ΔP，故 M 增 10% 對應 P 約升 10%。"},{"stem":"貨幣流通速度（V）是指","options":["在既定時期內，單位貨幣平均用於購買最終產出的次數","央行發行鈔票的印刷速度","港元兌美元的波動幅度","銀行處理一筆轉帳所需秒數"],"answerIndex":0,"explanation":"V 衡量貨幣周轉次數，常以名義 GDP／貨幣存量近似。"},{"stem":"長期而言，貨幣數量論強調通脹的根本原因是","options":["季節性水果歉收","貨幣供應持續過快增長","單一行業罷工","股市投機"],"answerIndex":1,"explanation":"數量論認為持續通脹本質上是貨幣現象，源於貨幣增長長期高於實質產出增長。"},{"stem":"設 M 增長 8%，Y 增長 3%，V 不變，則通脹率約為","options":["11%","3%","5%","8%"],"answerIndex":2,"explanation":"由 %ΔM + %ΔV = %ΔP + %ΔY，V 不變 ⇒ %ΔP ≈ 8% − 3% = 5%。"},{"stem":"若人們預期通脹上升而更快花掉現金，短期內 V 上升，在 M 與 Y 不變時，這會","options":["必然令物價下跌","對物價全無影響","自動減少貨幣供應","令物價有上升壓力"],"answerIndex":3,"explanation":"V 上升意味貨幣需求行為改變，同樣的 M 支撐更高名義支出，推高 P。"},{"stem":"下列哪項最符合「通脹始終是貨幣現象」的含義？","options":["沒有持續過快的貨幣擴張，就難以出現長期持續的高通脹","任何一個月 CPI 變動都只由貨幣政策造成","相對價格變動等於通脹","財政政策永遠不影響物價"],"answerIndex":0,"explanation":"強調的是持續高通脹需有貨幣配合；短期相對價格或供應衝擊仍可影響 CPI。"},{"stem":"在極度短缺與物價管制下，官方物價指數可能低估通脹，因為","options":["貨幣數量論在任何制度下都失效","黑市價格與排隊、缺貨等代價未被充分反映","名義 GDP 統計必然高估","匯率必定自由浮動"],"answerIndex":1,"explanation":"管制與短缺使交易轉入黑市或以非價格配給，官方指數往往未能完整反映真實生活成本。"},{"stem":"若實質產出因技術進步長期上升，而 M 與 V 不變，數量方程式意味著","options":["物價趨向上升","名義 GDP 必然為零","失業必然上升","物價趨向下降"],"answerIndex":3,"explanation":"Y 升而 MV 不變 ⇒ P 下跌，即生產力提升在貨幣不變時具通縮壓力。"},{"stem":"把數量論應用於政策時，一個常見提醒是","options":["M 與 P 在任何頻率下都有完美一比一關係","只要印鈔就能提高長期實質生活水平","短期 V 與 Y 可能波動，故貨幣與物價的對應並非逐季精確","流通速度永遠是常數且不可變"],"answerIndex":2,"explanation":"長期趨勢上 M 與 P 相關強，但短期 V、Y 變動使關係不精確。"}]},{"id":"21.4-失業和就業不足","title":"21.4 失業和就業不足","questions":[{"stem":"失業率一般定義為","options":["失業人數 ÷ 總人口 × 100%","失業人數 ÷ 就業人數 × 100%","就業不足人數 ÷ 勞動人口 × 100%","失業人數 ÷ 勞動人口 × 100%"],"answerIndex":3,"explanation":"失業率＝失業人數／勞動人口（就業＋失業）；分母不是總人口。"},{"stem":"摩擦性失業主要來自","options":["勞動力在職位之間正常流轉與資訊搜尋","整個經濟總需求嚴重不足","產業永久消失且技能完全過時","法定最低工資定為零"],"answerIndex":0,"explanation":"摩擦性失業是找工、轉工過程中的短期失業，即使在健康經濟亦存在。"},{"stem":"結構性失業的典型原因是","options":["工人感冒請假一週","產業轉型令部分工人技能與職位需求不匹配","季節性農忙結束","央行一週內輕微加息"],"answerIndex":1,"explanation":"結構性失業源於技能、地區或產業結構錯配，往往較持久。"},{"stem":"周期性失業主要與下列哪項相關？","options":["大學生畢業後的短暫求職","工人主動休假旅遊","經濟衰退導致總需求不足","人口老化本身"],"answerIndex":2,"explanation":"周期性失業隨商業周期波動，衰退時總需求不足推高失業。"},{"stem":"自然失業率大致包括","options":["僅有周期性失業","所有失業類型之和且永遠為零","只有就業不足","摩擦性與結構性失業（不含周期性失業）"],"answerIndex":3,"explanation":"自然失業率對應充分就業概念下仍存在的摩擦與結構性失業。"},{"stem":"就業不足（underemployment）通常是指","options":["有工作但工時不足，或技能未被充分利用而希望從事更多／更匹配工作","工人完全沒有工作","已退出勞動人口的退休人士","在學全日制學生"],"answerIndex":0,"explanation":"就業不足者有工作，但工時或職位質量低於意願／潛力；有別於完全失業。"},{"stem":"勞動人口參與率是","options":["就業人數 ÷ 失業人數","勞動人口 ÷ 成年人口（或指定年齡組）× 100%","失業人數 ÷ 就業人數","總人口 ÷ 勞動人口"],"answerIndex":1,"explanation":"參與率衡量成年人口中進入勞動市場（就業或求職）的比例。"},{"stem":"若失業者因長期找不到工作而停止求職，官方失業率可能","options":["上升，因為失業人數定義擴大","不變，因總人口同時減少","下跌，因他們被剔出勞動人口（灰心勞工效應）","變成負數"],"answerIndex":2,"explanation":"灰心而不再求職者不算失業，勞動人口與失業人數同減，失業率或下跌並低估鬆弛。"},{"stem":"充分就業並不意味著失業率為零，因為","options":["即使經濟健康，仍會有摩擦與結構性失業","統計部門禁止錄得零失業","進口必帶來失業","所有工人都必須同時持有兩份工"],"answerIndex":0,"explanation":"充分就業允許自然失業；零失業既不現實也不必要。"},{"stem":"下列哪項政策較針對結構性失業？","options":["短期發放一筆消費券而不培訓","只調低隔夜利率一個基點","禁止所有企業裁員而凍結產業結構","職業再培訓與協助跨行業／跨地區匹配"],"answerIndex":3,"explanation":"結構性失業需改善技能與匹配；純需求刺激對此類失業效果有限。"}]},{"id":"22.1-財政政策","title":"22.1 財政政策","questions":[{"stem":"財政政策主要透過下列哪項影響經濟？","options":["政府開支與稅收的調整","央行公開市場操作買賣外匯","法定準備金率","商業銀行自主決定的最優惠利率"],"answerIndex":0,"explanation":"財政政策屬政府預算工具：政府購買、轉移支付與稅收。貨幣工具屬貨幣政策。"},{"stem":"在經濟衰退、存在負產出缺口時，擴張性財政政策的例子是","options":["提高收入稅率並大幅削減公共投資","提高貼現率","增加基建開支或減稅","出售政府債券以抽走銀行儲備（作為貨幣緊縮）"],"answerIndex":2,"explanation":"擴張性財政提高 G 或降低 T，刺激總需求；加稅減支屬緊縮。"},{"stem":"緊縮性財政政策適合用於","options":["嚴重通縮且總需求崩潰之際","經濟過熱、通脹壓力高企之時","失業率遠高於自然失業率且產出缺口為負時","流動性陷阱中完全取代所有其他政策"],"answerIndex":1,"explanation":"過熱時減支或加稅可抑制總需求；衰退時緊縮會雪上加霜。"},{"stem":"自動穩定器的例子是","options":["國會每次衰退都立刻通過全新臨時法案","央行每日微調政策利率","一次性的大型基建公投","累進稅與失業援助金隨經濟自動調節收支"],"answerIndex":3,"explanation":"自動穩定器無需新立法即隨收入／失業變動：衰退時稅收少、援助多，緩和波動。"},{"stem":"政府預算赤字是指","options":["一個財政年度內，政府開支大於稅收等收入","累計的未償還政府債務總額","貿易逆差","外匯儲備下降"],"answerIndex":0,"explanation":"赤字是流量（某期收支差額）；債務是存量（累計借款）。"},{"stem":"擠出效應（crowding out）是指擴張性財政可能","options":["必然令出口立刻倍增","使貨幣供應自動減少一半","令私人投資因利率上升等途徑而被部分排擠","令自然失業率降為零"],"answerIndex":2,"explanation":"政府借貸推高利率或爭奪資源時，私人投資／消費可能被排擠，削弱乘數效果。"},{"stem":"簡單凱因斯乘數的直覺是","options":["稅收增加會令總需求無限上升","政府開支增加會透過收入與消費的連鎖反應，令產出增幅大於初始開支","只有貨幣政策才有乘數","乘數永遠小於 0"],"answerIndex":1,"explanation":"額外收入帶來額外消費，再變成他人收入，總需求放大；實際乘數受漏損、擠出等影響。"},{"stem":"財政政策的時間滯後問題包括","options":["政策效果在一小時內必然完全顯現","只存在於固定匯率而浮動匯率全無滯後","乘數在統計上必定為整數","辨認、決策與執行滯後，可能使刺激在經濟已好轉時才到位"],"answerIndex":3,"explanation":"從發現問題、立法到撥款落地需時，政策或成「逆周期變順周期」風險。"},{"stem":"若政府以發債為赤字融資，短期內較可能","options":["直接令基礎貨幣必然減少","令對外貿易立即禁止","增加債券供應，在其他條件下推高利率的壓力","令失業率定義改變"],"answerIndex":2,"explanation":"發債增加貸款資金需求／債券供給，利率或上升，與擠出效應相關；不等於自動減貨幣基數。"},{"stem":"供給面財政措施（如改善人力培訓稅務優惠）的目標較著重","options":["提高潛在產出與長期增長能力","只在一週內推高名義 CPI","永久凍結所有相對價格","取代外匯市場的所有交易"],"answerIndex":0,"explanation":"供給面政策著眼生產力與潛在產出，有別於純需求管理的短期刺激。"}]},{"id":"22.2-貨幣政策","title":"22.2 貨幣政策","questions":[{"stem":"貨幣政策通常由誰負責？","options":["立法會的工務小組","中央銀行（或貨幣當局）","個別零售商的定價部門","統計處的物價科"],"answerIndex":1,"explanation":"貨幣政策由央行／貨幣當局操作貨幣供應、利率或匯率相關工具。"},{"stem":"公開市場買入政府債券（擴張）的直接效果傾向是","options":["銀行儲備減少、利率必然急升","財政赤字自動消失","潛在產出即時倍增","銀行體系儲備增加、貨幣供應有上升壓力"],"answerIndex":3,"explanation":"央行買債把流動性注入銀行體系，儲備↑，有助信用擴張與利率下行。"},{"stem":"提高法定存款準備金率屬","options":["緊縮性貨幣政策","擴張性貨幣政策","中性且不影響貸款能力","財政自動穩定器"],"answerIndex":0,"explanation":"較高準備金率降低銀行可貸資金倍數，屬緊縮。"},{"stem":"在利息傳導機制中，寬鬆貨幣政策通常期望","options":["利率上升 → 投資上升","匯率必然大幅貶值且出口立刻為零","利率下降 → 投資與耐用品消費上升 → 總需求上升","工資在一日內全部指數化"],"answerIndex":2,"explanation":"經典傳導：流動性↑、利率↓，刺激投資／消費（及可能淨出口）。"},{"stem":"香港聯繫匯率制度下，貨幣政策的重要特點是","options":["金管局可完全獨立、長期令港元利率與美元利率大幅背離","港元匯率目標優先，本地利率大致跟隨美元利率走势","港元自由浮動且無兌換保證","貨幣基礎與美元脫鈎且無備兌"],"answerIndex":1,"explanation":"聯匯下匯率穩定是錨，利率自主性受限，港元利率趨向跟隨美元。"},{"stem":"流動性陷阱是指","options":["銀行體系完全沒有超額準備","只有財政赤字才存在","匯率永遠固定於黃金","利率已接近下限，進一步增加貨幣供應難以再透過降息刺激經濟"],"answerIndex":3,"explanation":"當利率近零，貨幣需求極具利率彈性，傳統降息渠道乏力。"},{"stem":"緊縮貨幣政策常用於對抗","options":["過高的通脹壓力","嚴酷的需求不足型衰退（作為首選且唯一工具）","通縮螺旋","灰心勞工增加本身"],"answerIndex":0,"explanation":"收緊貨幣抑制總需求與通脹；衰退／通縮時通常需寬鬆而非緊縮。"},{"stem":"貼現率（或再融資利率）上調，一般訊息是","options":["央行鼓勵銀行更多向其借貸以擴張信貸","財政部將減稅","借貸成本訊號趨向收緊","失業率目標改為零"],"answerIndex":2,"explanation":"較高貼現率提高銀行向央行融資成本，屬收緊訊號。"},{"stem":"貨幣政策影響實質經濟的一個重要前提（短期）是","options":["物價與工資完全即時充分彈性，故實質變數永不變","所有市場永遠出清且無資訊成本","貨幣是絕對中性且在任何期限都無實質效應","名義剛性存在，使名義需求變化能暫時影響產出與就業"],"answerIndex":3,"explanation":"短期名義工資／物價僵性令貨幣衝擊可影響實質產出；長期貨幣或趨中性。"},{"stem":"量化寬鬆（QE）大致是指","options":["政府提高所有稅率","央行大量買入較長期資產以注入流動性、壓低長端利率","禁止銀行吸收存款","把法定貨幣改為實物易貨"],"answerIndex":1,"explanation":"QE 透過擴大央行資產負債表買債等，在政策利率已低時進一步寬鬆。"}]},{"id":"23.1-國際貿易概述","title":"23.1 國際貿易概述","questions":[{"stem":"國際貿易最基本的經濟理由是","options":["各國應完全自給自足以策安全","出口必然有害、進口必然有利","貿易使各國可按比較優勢專門化並互利","只有大國才應參與貿易"],"answerIndex":2,"explanation":"即使一國在各方面都較強，仍可透過比較優勢分工獲利。"},{"stem":"開放程度常用下列哪項粗略衡量？","options":["（出口＋進口）／本地生產總值","首都人口數目","官方語言數量","外匯儲備的幣種種類"],"answerIndex":0,"explanation":"貿易額相對 GDP 可反映經濟對外開放與貿易依存度。"},{"stem":"下列哪項屬貿易的動態／額外得益（相對於靜態比較優勢）？","options":["完全消除所有失業","令匯率永遠固定","使政府無需任何法規","透過競爭、技術擴散與規模經濟促進生產力"],"answerIndex":3,"explanation":"貿易除靜態资源配置得益外，亦可帶來競爭壓力、知識擴散與規模效應。"},{"stem":"貿易保護主義的常見工具不包括","options":["關稅","自由貿易協定全面撤銷所有壁壘後的零關稅承諾本身","進口配額","非關稅壁壘如繁瑣技術標準濫用"],"answerIndex":1,"explanation":"關稅、配額、NTB 屬保護；FTA 下零關稅承諾是開放而非保護工具。"},{"stem":"「貿易逆差」是指","options":["出口大於進口","財政預算盈餘","進口商品與服務價值大於出口","資本帳戶必然同時為零"],"answerIndex":2,"explanation":"商品／服務貿易逆差＝進口＞出口；不等同財政狀況。"},{"stem":"小型開放經濟體參與貿易的特點是","options":["往往是國際價格接受者，專門化對福利影響大","可單方面決定所有國際價格","完全不受外圍需求波動影響","無需進口任何原材料"],"answerIndex":0,"explanation":"小國難以左右世界價格，但可依比較優勢專門化而大幅獲益，亦較受外圍波動影響。"},{"stem":"世界貿易組織（WTO）的一項核心精神是","options":["鼓勵成員以配額取代所有關稅","禁止任何區域貿易協定","推動貿易爭端以武力解決","降低貿易壁壘並以規則處理爭端"],"answerIndex":3,"explanation":"WTO 旨在可預測的規則下促進開放貿易及爭端解決。"},{"stem":"出口導向增長策略強調","options":["全面禁止出口以保護資源","以海外市場帶動國內產業擴張與學習效應","只出口原材料、禁止出口製成品","關閉所有港口"],"answerIndex":1,"explanation":"出口導向借助外需擴大規模、賺取外匯並常伴隨產業升級學習。"},{"stem":"下列關於貿易與就業的陳述，較合理的是","options":["貿易會改變產業就業結構，整體就業更取決於宏觀需求與勞動市場","進口必然使總就業永久下降相同百分比","只有出口部門創造就業，進口部門不創造任何就業","自給自足保證充分就業"],"answerIndex":0,"explanation":"貿易重分配就業於優勢部門；總就業水平主要看宏觀與勞動市場制度。"},{"stem":"運輸與通訊成本下降對國際貿易的影響通常是","options":["提高貿易的交易成本，抑制貿易","只影響服務、不影響貨品","降低貿易成本，促進貿易量與全球价值链分工","令比較優勢原理失效"],"answerIndex":2,"explanation":"更低的運費與資訊成本使跨境交易更划算，加深分工。"}]},{"id":"23.2-絕對優勢和比較優勢","title":"23.2 絕對優勢和比較優勢","questions":[{"stem":"絕對優勢是指","options":["機會成本較高的一方","只出口奢侈品的能力","匯率升值本身","以較少資源（或較低成本）生產某產品的能力"],"answerIndex":3,"explanation":"絕對優勢比較的是生產同一產品的絕對生產力／資源投入。"},{"stem":"比較優勢取決於","options":["名義工資的絕對水平高低","生產該產品的機會成本高低","國土面積","是否擁有絕對優勢"],"answerIndex":1,"explanation":"比較優勢看機會成本：機會成本較低者具比較優勢。"},{"stem":"即使甲國在兩種產品上都有絕對優勢，貿易仍可能互利，因為","options":["雙方機會成本比率不同，仍可按比較優勢分工","絕對優勢自動等於比較優勢","甲國不應貿易","乙國毫無生產能力"],"answerIndex":0,"explanation":"李嘉圖洞見：比較優勢可獨立於絕對優勢而存在。"},{"stem":"下列哪項陳述正確？","options":["有絕對優勢者必然在該產品有比較優勢","比較優勢只適用於三個國家以上","有比較優勢者未必有絕對優勢","機會成本與比較優勢無關"],"answerIndex":2,"explanation":"比較優勢只看相對機會成本；絕對落後仍可有較低機會成本的產品。"},{"stem":"若甲生產一單位布機會成本是 2 單位米，乙是 5 單位米，則","options":["乙在布有比較優勢","兩者機會成本相同","無法判斷，因未知絕對產量","甲在布有比較優勢"],"answerIndex":3,"explanation":"布的機會成本：甲 2＜乙 5，故甲具布的比較優勢。"},{"stem":"常見誤解是「工資較低的國家在所有產品都有比較優勢」。正確理解是","options":["低工資國家必定在所有產品有比較優勢","低工資可能反映較低生產力；比較優勢仍由機會成本結構決定","高工資國家不可能出口任何產品","工資與貿易模式無關"],"answerIndex":1,"explanation":"工資差異常對應生產力差異；貿易模式仍取決於相對機會成本。"},{"stem":"絕對優勢的衡量單位可以是","options":["生產一單位產出所需的勞動小時（越少越有絕對優勢）","只有匯率報價","只有失業率","只有財政赤字率"],"answerIndex":0,"explanation":"經典模型用單位產出的勞動投入比較絕對優勢。"},{"stem":"若兩國機會成本完全相同，則","options":["仍有巨大比較優勢貿易得益","絕對優勢亦必然相同","按比較優勢的靜態貿易得益消失（無互利專門化空間）","必須實施關稅才能貿易"],"answerIndex":2,"explanation":"機會成本相同則無比較優勢差異，古典靜態互利分工空間消失。"},{"stem":"「自給自足點」與「貿易後消費點」相比，貿易互利表現為","options":["兩國都必須減少兩種產品的消費","消費可能性超出自給自足的生產可能邊界所限","生產可能邊界必然向內移","機會成本變得無限大"],"answerIndex":1,"explanation":"貿易讓消費組合可位於原本 PPF 之外（透過交換）。"},{"stem":"下列哪項最能區分絕對優勢與比較優勢？","options":["兩者定義完全相同","比較優勢只看氣候，絕對優勢只看人口","絕對優勢只適用於服務業","絕對優勢看「誰較高產」；比較優勢看「誰犧牲較少」"],"answerIndex":3,"explanation":"絕對＝生產力高低；比較＝機會成本高低。"}]},{"id":"23.3-比較優勢原理","title":"23.3 比較優勢原理","questions":[{"stem":"根據比較優勢原理，一國應出口","options":["機會成本較低（具比較優勢）的產品","機會成本較高的產品","所有它具絕對優勢的產品，不論機會成本","只有奢侈品"],"answerIndex":0,"explanation":"出口具比較優勢（機會成本低）的產品，進口機會成本高的產品。"},{"stem":"下表（勞動小時／單位）：甲：酒 4、布 2；乙：酒 8、布 8。甲的布相對酒的機會成本是","options":["2 單位酒","4 單位酒","8 單位酒","0.5 單位酒"],"answerIndex":3,"explanation":"甲用 2 小時做布，同樣 2 小時可做 0.5 單位酒，故 1 布的機會成本＝0.5 酒。"},{"stem":"承上題，乙的布相對酒的機會成本是","options":["0.5 單位酒","1 單位酒","2 單位酒","4 單位酒"],"answerIndex":1,"explanation":"乙 8 小時做 1 布，同樣可做 1 酒，故 1 布＝1 酒。"},{"stem":"承上兩題，誰應專門生產布？","options":["乙，因絕對耗時較多顯得「更需要」","兩者同時放棄布","甲，因其布的機會成本較低","無法決定"],"answerIndex":2,"explanation":"甲布的機會成本 0.5＜乙的 1，甲具布比較優勢。"},{"stem":"比較優勢原理假設貿易前生產在生產可能邊界上運作，主要是為了","options":["強調資源已充分利用時，增加一種產品必須放棄另一種","否認失業存在的可能","要求兩國科技完全相同","排除運輸成本以外的所有成本概念"],"answerIndex":0,"explanation":"在 PPF 上，機會成本才清楚呈現取捨；這是模型簡化。"},{"stem":"當貿易開放後，資源應流向","options":["比較劣勢部門以「保護就業」為唯一目標","任何絕對優勢較弱的部門","完全停止流動","具比較優勢的出口部門"],"answerIndex":3,"explanation":"專門化意味資源移向比較優勢產業。"},{"stem":"比較優勢隨時間可能改變，原因包括","options":["機會成本定義被國際組織凍結","技術進步、人力資本累積與產業政策改變相對生產力","匯率報價方式改變小數位","人口普查的問卷語言"],"answerIndex":1,"explanation":"相對生產力改變會改寫機會成本，從而改寫比較優勢。"},{"stem":"下列哪項是應用比較優勢時的常見陷阱？","options":["計算兩種產品的機會成本比率","比較相對成本","把「目前產量最大」直接等同「應出口」而忽略機會成本","考慮互利的貿易價格區間"],"answerIndex":2,"explanation":"產量大或有絕對優勢≠必然應專門出口；關鍵是機會成本。"},{"stem":"若引入運輸成本，比較優勢貿易","options":["理論上完全不可能發生","令機會成本概念失效","只允許易貨、禁止貨幣","仍然可能，但可貿易的互利價格區間會收窄"],"answerIndex":3,"explanation":"運輸成本侵蝕部分貿易得益，部分臨界產品可能不貿易。"},{"stem":"兩國兩產品李嘉圖模型中，完全專門化的條件之一是","options":["貿易條件落在兩國機會成本之間且需求足以吸收專門化產出","兩國必須同樣大小","關稅必須為 100%","絕對優勢必須相反"],"answerIndex":0,"explanation":"互利貿易價格須介於雙方機會成本之間；需求與規模亦影響專門化程度。"}]},{"id":"23.4-貿易比率和貿易得益","title":"23.4 貿易比率和貿易得益","questions":[{"stem":"貿易條件（terms of trade）常用來指","options":["財政赤字與 GDP 比率","出口價格指數相對進口價格指數的比率","失業率與通脹率之和","名義匯率的買賣差價本身"],"answerIndex":1,"explanation":"商品貿易條件＝出口價格／進口價格（指數形式）。"},{"stem":"互利的貿易價格（貿易比率）必須","options":["等於其中一國的機會成本且令另一國零得益","高於兩國機會成本","介於兩國該產品的機會成本之間","由單一國家立法規定為零"],"answerIndex":2,"explanation":"價格落在雙方機會成本之間，兩國都比自給自足更好。"},{"stem":"若貿易條件改善（出口相對進口更貴），該國","options":["同樣出口量可換得更多進口，實質購買力趨向改善","必然出現貿易逆差","比較優勢自動消失","必須立刻實施配額"],"answerIndex":0,"explanation":"出口相對貴＝一單位出口換更多進口，有利實質收入。"},{"stem":"貿易得益的來源包括","options":["只來自關稅收入","強迫對方接受單向進貢","印刷更多貨幣","專門化提高世界總產出，再透過交換改善雙方消費可能"],"answerIndex":3,"explanation":"世界產出因專門化上升，交換使雙方可達更好消費組合。"},{"stem":"在二人／兩國交換模型中，若協議貿易比率過度偏向一方","options":["雙方得益必然同時最大化","另一方可能拒絕貿易，互利區間被破壞","機會成本會自動改變以迎合該比率","絕對優勢會互換"],"answerIndex":1,"explanation":"超出互利區間的條件不會被自願接受。"},{"stem":"消費者因貿易而得益，主要因為","options":["所有本地工業都獲得壟斷租金","政府禁止消費進口貨","進口競爭使可選品種增加、部分物價較自給自足時更低","名義工資必然下降"],"answerIndex":2,"explanation":"進口擴張選擇與降低部分價格，提升消費者剩餘。"},{"stem":"生產者（出口部門）的貿易得益常表現為","options":["出口價格相對自給自足時更高、產量擴張","出口部門必然萎縮","出口價格被壓至零","失去所有比較優勢"],"answerIndex":0,"explanation":"出口商面對更大市場與較有利價格，產出擴張。"},{"stem":"貿易的「淨社會得益」概念強調","options":["進口部門工人的損失在會計上永遠大於所有得益","只需計算關稅","統計上無法討論剩餘","勝者與負者的得失加總後，潛在總剩餘通常為正，但分配問題仍在"],"answerIndex":3,"explanation":"總餅做大，但有輸家；再分配政策可分開處理公平問題。"},{"stem":"若國際貿易比率剛好等於甲國的機會成本","options":["兩國得益必然均分","甲國得益最大","甲國從貿易得零得益，乙國囊括全部貿易得益","貿易量必然無限大"],"answerIndex":2,"explanation":"價格＝本國機會成本時，本國對貿易無感（零得益），對方獲全部剩餘。"},{"stem":"實質貿易得益最終反映在","options":["外匯儲備會計帳面的任意幣種轉換","可消費的商品與服務組合優於自給自足","媒體出口排名口號","關稅稅則的頁數"],"answerIndex":1,"explanation":"經濟福利看消費可能與實質生活水平，而非單純出口額口號。"}]},{"id":"23.5-香港的對外貿易","title":"23.5 香港的對外貿易","questions":[{"stem":"香港對外貿易的突出特徵是","options":["幾乎零進口、完全自給","主要依靠農產品出口創匯","貿易總額相對 GDP 極高，屬高度外向型經濟","從不參與轉口貿易"],"answerIndex":2,"explanation":"香港開放度極高，進出口與轉口相對經濟規模很大。"},{"stem":"轉口貿易對香港的意義是","options":["禁止任何貨物再出口","把進口貨經香港再出口至其他地方，發揮中介與物流優勢","只准許本地製造貨出口","與服務業無關"],"answerIndex":1,"explanation":"轉口是香港傳統優勢，連接內地與世界市場。"},{"stem":"香港作為自由港，長期特徵包括","options":["對絕大多數貨品徵收高額保護關稅","全面配額管理所有消費品進口","禁止服務輸出","一般不設關稅（少數應稅品除外）並貿易政策高度開放"],"answerIndex":3,"explanation":"自由港意味貨品進出關稅壁壘極低，開放是港貿易制度核心。"},{"stem":"下列哪項是香港主要的服務輸出例子？","options":["金融、專業服務、旅遊與運輸相關服務輸出","本地街市買菜","只限於重工業製成品","義務兵役"],"answerIndex":0,"explanation":"香港服務業高度外向：金融、專業服務、旅遊、物流等。"},{"stem":"內地改革開放以來，香港貿易格局的重要變化是","options":["完全停止與內地往來","轉口額永久變為零","與內地貿易及作為中介的角色顯著加強","製造業就業比重回升至過半並取代服務"],"answerIndex":2,"explanation":"內地開放強化了香港作為貿易、金融與專業服務中介的角色。"},{"stem":"香港商品貿易長期常現「貨物貿易逆差、服務貿易盈餘」的組合，較合理的理解是","options":["逆差證明貿易政策失敗且必須閉關","反映消費與生產結構：大量進口貨物，同時輸出金融等服務","統計錯誤且不可能持續","聯匯制度禁止服務出口"],"answerIndex":1,"explanation":"小而開放、製造業外移下，貨物逆差與服務盈餘可並存，並由經常／資本帳整體平衡。"},{"stem":"香港對外貿易易受外圍波動影響，主要因為","options":["完全封閉","農業佔 GDP 過半","沒有港口","經濟規模小、對外依存度高"],"answerIndex":3,"explanation":"高度開放的小型經濟對外圍需求與金融環境敏感。"},{"stem":"《內地與香港關於建立更緊密經貿關係的安排》（CEPA）主要作用是","options":["加強兩地貨物與服務貿易開放與合作","提高兩地之間的關稅壁壘","禁止專業服務北上","取消港元"],"answerIndex":0,"explanation":"CEPA 推動兩地更緊密的貿易與投資開放。"},{"stem":"離岸貿易（offshore trade）與傳統轉口的分別大致是","options":["兩者法律定義完全相同且貨物必經香港","貨物不一定途經香港，但由港商安排買賣與相關服務","離岸貿易禁止使用美元結算","轉口不涉及任何物流"],"answerIndex":1,"explanation":"離岸貿易貨不經港，但合約、融資、管理等服務仍可由港企提供。"},{"stem":"維持香港貿易競爭力的重要因素不包括","options":["高效物流、法治與簡單低稅","國際化專業服務集群","全面以高關稅保護所有本地夕陽工業","穩定的貨幣與金融基建"],"answerIndex":2,"explanation":"高關稅保護與香港自由港、開放競爭模式相悖；競爭力靠基建、制度與人才。"}]}]};
+
+  const LETTERS = ['A', 'B', 'C', 'D'];
+  const el = (id) => document.getElementById(id);
+
+  const state = {
+    mode: null, // section id or 'all'
+    queue: [],
+    index: 0,
+    score: 0,
+    answered: false,
+    currentShuffled: null,
+  };
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildTopicPicker() {
+    const grid = el('topicGrid');
+    grid.innerHTML = '';
+
+    const allBtn = document.createElement('button');
+    allBtn.type = 'button';
+    allBtn.className = 'topic-btn all';
+    allBtn.innerHTML = '<span class="t-title">全部章節</span><span class="t-meta">110 題 · 混合練習</span>';
+    allBtn.addEventListener('click', () => startQuiz('all'));
+    grid.appendChild(allBtn);
+
+    BANK.sections.forEach((sec) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'topic-btn';
+      btn.innerHTML =
+        '<span class="t-title">' + escapeHtml(sec.title) + '</span>' +
+        '<span class="t-meta">' + sec.questions.length + ' 題</span>';
+      btn.addEventListener('click', () => startQuiz(sec.id));
+      grid.appendChild(btn);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function buildQueue(mode) {
+    let items = [];
+    if (mode === 'all') {
+      BANK.sections.forEach((sec) => {
+        sec.questions.forEach((q, qi) => {
+          items.push({ sectionId: sec.id, sectionTitle: sec.title, qIndex: qi, q });
+        });
+      });
+      items = shuffle(items);
+    } else {
+      const sec = BANK.sections.find((s) => s.id === mode);
+      items = sec.questions.map((q, qi) => ({
+        sectionId: sec.id,
+        sectionTitle: sec.title,
+        qIndex: qi,
+        q,
+      }));
+      items = shuffle(items);
+    }
+    return items;
+  }
+
+  function startQuiz(mode) {
+    state.mode = mode;
+    state.queue = buildQueue(mode);
+    state.index = 0;
+    state.score = 0;
+    state.answered = false;
+    el('picker').classList.add('hidden');
+    el('result').classList.add('hidden');
+    el('quiz').classList.remove('hidden');
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const item = state.queue[state.index];
+    const q = item.q;
+    state.answered = false;
+
+    el('progressLabel').textContent =
+      '第 ' + (state.index + 1) + ' / ' + state.queue.length + ' 題';
+    el('scoreLabel').textContent = '得分：' + state.score;
+    el('progressBar').style.width =
+      ((state.index / state.queue.length) * 100).toFixed(1) + '%';
+    el('sectionChip').textContent = item.sectionTitle + ' · Q' + (item.qIndex + 1);
+    el('qText').textContent = q.stem;
+
+    const order = shuffle([0, 1, 2, 3]);
+    state.currentShuffled = order.map((origIdx, displayIdx) => ({
+      displayLetter: LETTERS[displayIdx],
+      text: q.options[origIdx],
+      origIdx,
+      isCorrect: origIdx === q.answerIndex,
+    }));
+
+    const box = el('options');
+    box.innerHTML = '';
+    state.currentShuffled.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt';
+      btn.dataset.i = String(i);
+      btn.innerHTML =
+        '<span class="letter">' + opt.displayLetter + '</span>' +
+        '<span class="label">' + escapeHtml(opt.text) + '</span>';
+      btn.addEventListener('click', () => onAnswer(i));
+      box.appendChild(btn);
+    });
+
+    const fb = el('feedback');
+    fb.className = 'feedback';
+    fb.textContent = '';
+    el('nextBtn').classList.add('hidden');
+    el('nextBtn').textContent =
+      state.index + 1 >= state.queue.length ? '查看成績' : '下一題';
+    el('retryBtn').disabled = true;
+  }
+
+  function onAnswer(displayIndex) {
+    if (state.answered) return;
+    state.answered = true;
+
+    const chosen = state.currentShuffled[displayIndex];
+    const correct = state.currentShuffled.find((o) => o.isCorrect);
+    const q = state.queue[state.index].q;
+    const buttons = [...el('options').querySelectorAll('.opt')];
+
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      const o = state.currentShuffled[i];
+      if (o.isCorrect) btn.classList.add('correct');
+      else if (i === displayIndex) btn.classList.add('wrong');
+      else btn.classList.add('dim');
+    });
+
+    const fb = el('feedback');
+    if (chosen.isCorrect) {
+      state.score += 1;
+      fb.className = 'feedback show ok';
+      fb.innerHTML =
+        '<strong>正確 ✓（' + chosen.displayLetter + '）</strong>' +
+        escapeHtml(q.explanation);
+    } else {
+      fb.className = 'feedback show bad';
+      fb.innerHTML =
+        '<strong>不正確 ✗</strong>正確答案是 <strong>' +
+        correct.displayLetter +
+        '</strong>：' +
+        escapeHtml(correct.text) +
+        '<br><br>' +
+        escapeHtml(q.explanation);
+    }
+
+    el('scoreLabel').textContent = '得分：' + state.score;
+    el('progressBar').style.width =
+      (((state.index + 1) / state.queue.length) * 100).toFixed(1) + '%';
+    el('nextBtn').classList.remove('hidden');
+    el('retryBtn').disabled = false;
+  }
+
+  function nextQuestion() {
+    if (state.index + 1 >= state.queue.length) {
+      showResult();
+      return;
+    }
+    state.index += 1;
+    renderQuestion();
+  }
+
+  function retryCurrent() {
+    // re-shuffle same question without changing score for this attempt's prior point
+    // If already answered correctly, remove that point before retry
+    if (state.answered) {
+      const buttons = el('options').querySelectorAll('.opt.correct');
+      // detect if user got it right this time: feedback has ok class
+      if (el('feedback').classList.contains('ok')) {
+        state.score = Math.max(0, state.score - 1);
+      }
+    }
+    renderQuestion();
+  }
+
+  function showResult() {
+    el('quiz').classList.add('hidden');
+    el('result').classList.remove('hidden');
+    const total = state.queue.length;
+    const pct = total ? Math.round((state.score / total) * 100) : 0;
+    el('finalScore').textContent = state.score + ' / ' + total;
+    el('finalPct').textContent = '正確率 ' + pct + '%';
+    let msg = '繼續加油！';
+    if (pct === 100) msg = '滿分！概念掌握得很好。';
+    else if (pct >= 80) msg = '表現出色，再溫習錯題會更穩。';
+    else if (pct >= 60) msg = '及格水平，建議重做弱項章節。';
+    else msg = '需要多溫習相關概念，建議逐章重做。';
+    el('resultMsg').textContent = msg;
+
+    const modeLabel =
+      state.mode === 'all'
+        ? '全部章節（打亂次序）'
+        : (BANK.sections.find((s) => s.id === state.mode) || {}).title || state.mode;
+    el('resultDetail').textContent =
+      '本次範圍：' + modeLabel + ' · 共 ' + total + ' 題';
+  }
+
+  function backToPicker() {
+    el('quiz').classList.add('hidden');
+    el('result').classList.add('hidden');
+    el('picker').classList.remove('hidden');
+  }
+
+  el('nextBtn').addEventListener('click', nextQuestion);
+  el('retryBtn').addEventListener('click', retryCurrent);
+  el('backBtn').addEventListener('click', backToPicker);
+  el('restartSameBtn').addEventListener('click', () => startQuiz(state.mode));
+  el('restartAllBtn').addEventListener('click', backToPicker);
+
+  buildTopicPicker();
+  </script>
+</body>
+</html>
